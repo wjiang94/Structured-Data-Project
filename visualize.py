@@ -21,7 +21,7 @@ def visualize(ker, label, threshold=0.6):
                 G.add_edges_from([(i,j,{'weight':ker[i][j]})])
     pos = nx.spring_layout(G)
 
-    #drwa the graph
+    #draw the graph
     plt.figure(figsize=(20,20))
     nx.draw_networkx_nodes(G,pos,node_color='grey',
                           node_size=500,alpha=0.8)
