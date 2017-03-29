@@ -1,6 +1,6 @@
 import cv2
 
-def sift(img_name)
+def sift(img_name):
     """
     reference:
     install opencv : https://www.scivision.co/compiling-opencv3-with-extra-contributed-modules/
@@ -15,6 +15,7 @@ def sift(img_name)
     print("# kps: {}, descriptors: {}".format(len(kps), descs.shape))
     return kps, descs
     
-if __name__ = '__main__':
+if __name__ == '__main__':
     img = 'data/image_0001.jpg'
+    
     kps, descs = sift(img)
