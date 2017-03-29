@@ -28,7 +28,7 @@ def split(test_size=0.2, path='101_ObjectCategories/'):
                     label.append(i) 
             i += 1
 
-     y = one_hot(len(label_unique),label)
+    y = one_hot(len(label_unique),label)
     
     X_train, X_test, y_train, y_test = train_test_split(img, y, test_size=test_size)
     
