@@ -4,6 +4,8 @@ from sift_feature_extractor import sift
 from datetime import datetime
 #import cv2
 import pickle
+from sklearn.preprocessing import StandardScaler
+from scipy.cluster.vq import *
 
 def load_feature():
     """
@@ -77,9 +79,51 @@ def feature_extractor(X_train, X_test):
     return hog_train, hog_test, sift_train, sift_test
 
 
+def complete_sift(sift_train, sift_test):
+
+    """
+    Transform the descriptors of all key points into features using bag of words
+    """
+    
+    #filt lines with null descriptors
+    null_line = [i for i in range(len(sift_train)) if len(sift_train[i])==0]
+    sift_train_filt = [sift_train[i] for i in range(len(sift_train)) if i not in null_line]
+    
+    #concatenate train and test
+    sift_filt = numpy.concatenate((sift_train_filt,sift_test))
+    
+    #stack all the descriptors for train and test set
+    descs = sift_filt[0]
+    for idx, des in enumerate(sift_filt[1:]):
+        descs = numpy.vstack((descs, des))
+
+    #kmeans clustering
+    k = 100
+    voc, variances = kmeans(descs, k, 1)
+
+    #calculate the histogram 
+    n = len(sift_filt)
+    n_train = len(sift_train_filt)
+    sift_feature = np.zeros((n,k), "float32")
+    for i in range(n):  
+        words, distance = vq(sift_filt[i], voc)
+        for w in words:
+            sift_feature[i][w] += 1
+
+    # Tf-Idf vectorizaiton
+    nb_occurences = numpy.sum((sift_feature > 0) *1, axis=0)
+    idf = numpy.array(numpy.log((1.0*n+1) / (1.0*nb_occurences + 1)), 'float32')
+
+    # Scaling the words
+    stdSlr = StandardScaler().fit(sift_feature)
+    sift_feature = stdSlr.transform(sift_feature)
+
+    return sift_feature[:n_train], sift_feature[n_train:]
+
+
 if __name__ == '__main__':
     
     #label_unique, X_train, X_test, y_train, y_test = split()
     #hog_train, hog_test, sift_train, sift_test = feature_extractor(X_train, X_test)
     hog_train, hog_test, sift_train, sift_test = load_feature()
-
+    sift_feature_train, sift_feature_test = complete_sift(sift_train, sift_test)
