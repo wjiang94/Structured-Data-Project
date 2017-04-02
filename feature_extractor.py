@@ -98,7 +98,7 @@ def complete_sift(sift_train, sift_test):
         descs = numpy.vstack((descs, des))
 
     #kmeans clustering
-    k = 100
+    k = 500
     voc, variances = kmeans(descs, k, 1)
 
     #calculate the histogram 
