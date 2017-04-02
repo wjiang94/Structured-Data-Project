@@ -17,7 +17,7 @@ def visualize(ker, threshold=0.3):
     for i in range(len(ker)):
         a = list(ker[i])
         del a[i]
-        if np.max(a) > threshold:
+        if numpy.max(a) > threshold:
             weight[i] = {}
             for j in range(i+1,len(ker)):
                 if ker[i][j] > threshold:
